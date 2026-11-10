@@ -75,6 +75,10 @@ final class ProductPurchaserSK1: NSObject, Purchasing {
   /// Purchases a product, waiting for the completion block to be fired and
   /// returning a purchase result.
   func purchase(product: StoreProduct) async -> PurchaseResult {
+    // Buying without the offer would charge the regular price.
+    guard product.promotionalOffer == nil else {
+      return .failed(PurchaseError.promotionalOfferNeedsStoreKit2)
+    }
     guard let product = product.sk1Product else {
       return .failed(PurchaseError.noSk1Product)
     }

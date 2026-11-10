@@ -44,6 +44,12 @@ public final class StoreProduct: NSObject, StoreProductType, Sendable {
   /// ```
   public nonisolated(unsafe) var introOfferToken: IntroOfferToken?
 
+  /// A promotional offer this purchase is made with, signed by your server.
+  ///
+  /// Set only on the copy ``withPromotionalOffer(_:)`` returns, so the offer
+  /// applies to that one purchase and never to the shared product.
+  public private(set) nonisolated(unsafe) var promotionalOffer: PromotionalOffer?
+
   /// The Apple billing plan **that will actually be applied at purchase**
   /// on this device. Returns `nil` when no plan is configured on the
   /// Superwall Product OR when the configured plan isn't honored by Apple
@@ -440,6 +446,18 @@ public final class StoreProduct: NSObject, StoreProductType, Sendable {
     copy.introOfferToken = self.introOfferToken
     copy.isCustomProduct = self.isCustomProduct
     copy.customTransactionId = self.customTransactionId
+    return copy
+  }
+
+  /// Returns a copy of this `StoreProduct` that `Superwall.shared.purchase(_:)`
+  /// buys with `offer`. This product is left as it is, so every other
+  /// purchase of it stays at its regular terms.
+  ///
+  /// Promotional offers need StoreKit 2: under StoreKit 1 the purchase fails
+  /// instead of charging the regular price.
+  public func withPromotionalOffer(_ offer: PromotionalOffer) -> StoreProduct {
+    let copy = copyForCompositeProduct(billingPlanType: product.billingPlanType)
+    copy.promotionalOffer = offer
     return copy
   }
 

@@ -98,6 +98,12 @@ final class ProductPurchaserSK2: Purchasing {
         options.insert(.introductoryOfferEligibility(compactJWS: token.token))
       }
 
+      if let offer = product.promotionalOffer {
+        options.formUnion(
+          StoreKit.Product.PurchaseOption.promotionalOffer(offer.offerId, compactJWS: offer.compactJWS)
+        )
+      }
+
       #if compiler(>=6.3.2)
       if #available(iOS 26.4, macOS 26.4, watchOS 26.4, tvOS 26.4, visionOS 26.4, *),
         let plan = product.billingPlanType {

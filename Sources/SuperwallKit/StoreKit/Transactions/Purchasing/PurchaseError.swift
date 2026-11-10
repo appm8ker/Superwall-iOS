@@ -17,6 +17,8 @@ enum PurchaseError: LocalizedError {
   case customProductWithoutPurchaseController
   /// The paywall couldn't run a custom store checkout. Holds the paywall's reason.
   case customStoreCheckoutFailed(String)
+  /// StoreKit 1 can't apply a JWS-signed promotional offer.
+  case promotionalOfferNeedsStoreKit2
 
   var errorDescription: String? {
     switch self {
@@ -36,6 +38,8 @@ enum PurchaseError: LocalizedError {
       return "Unable to purchase this product."
     case .customStoreCheckoutFailed(let message):
       return message.isEmpty ? "Unable to purchase this product." : message
+    case .promotionalOfferNeedsStoreKit2:
+      return "Promotional offers can only be purchased with StoreKit 2."
     }
   }
 }

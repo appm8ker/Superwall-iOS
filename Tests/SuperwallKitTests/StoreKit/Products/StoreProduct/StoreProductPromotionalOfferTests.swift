@@ -28,6 +28,23 @@ struct StoreProductPromotionalOfferTests {
     #expect(product.promotionalOffer == nil)
   }
 
+  @Test("A billing plan copy keeps the offer and leaves the product as it is")
+  func billingPlanCopyKeepsTheOffer() {
+    let product = StoreProduct(
+      sk1Product: MockSkProduct(productIdentifier: "com.app.annual"),
+      entitlements: []
+    ).withPromotionalOffer(offer)
+
+    let monthly = product.withBillingPlan(.monthly)
+
+    #expect(monthly !== product)
+    #expect(monthly.productIdentifier == "com.app.annual")
+    #expect(monthly.promotionalOffer?.offerId == "black_basic_26")
+    // StoreKit 1 products have no pricing terms, so the plan is never offered.
+    #expect(!monthly.isBillingPlanAvailable)
+    #expect(monthly.billingPlanType == nil)
+  }
+
   @Test("StoreKit 1 fails the purchase instead of charging the regular price")
   func storeKit1FailsThePurchase() async {
     let dependencyContainer = DependencyContainer()

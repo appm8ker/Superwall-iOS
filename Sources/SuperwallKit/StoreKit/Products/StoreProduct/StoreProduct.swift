@@ -461,6 +461,16 @@ public final class StoreProduct: NSObject, StoreProductType, Sendable {
     return copy
   }
 
+  /// Returns a copy of this `StoreProduct` that prices and purchases on
+  /// `billingPlanType`, keeping any promotional offer. Check
+  /// ``isBillingPlanAvailable`` on the copy: when the plan isn't offered on
+  /// this device or storefront, the copy reports and buys the default plan.
+  public func withBillingPlan(_ billingPlanType: AppStoreProduct.BillingPlanType) -> StoreProduct {
+    let copy = copyForCompositeProduct(billingPlanType: billingPlanType)
+    copy.promotionalOffer = promotionalOffer
+    return copy
+  }
+
   public convenience init(
     sk1Product: SK1Product
   ) {
